@@ -1,3 +1,3 @@
-const ops = require('./src/ops')
+const operations = require('./src/operations')
 
-module.exports = { ops }
+module.exports = { operations }

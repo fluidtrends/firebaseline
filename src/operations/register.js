@@ -8,10 +8,11 @@ function register(firebase, args) {
                   }),
                   firebase.database().ref('users/' + user.uid).set({
                       email: args.email,
-                      name: args.name
+                      name: args.name,
+                      timestamp: new Date().getTime()
                   })
               ])
-   })
+          })
 }
 
 module.exports = register

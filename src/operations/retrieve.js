@@ -1,6 +1,7 @@
 function retrieve(firebase, args) {
   const key = args[0]
   const [node, index, value] = key.split('/')
+
   if (!value) {
       // Get the node by id
       return firebase.database().ref('/' + node + "/" + index).once('value').

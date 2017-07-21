@@ -1,4 +1,5 @@
 const join = require('./join')
+const create = require('./create')
 
 function add(firebase, args) {
    var original = Object.assign({}, args)
@@ -13,7 +14,7 @@ function add(firebase, args) {
        delete args[key]
    })
 
-   return functions.create(firebase, args).
+   return create(firebase, args).
           then(node => join(firebase, { [keys[0]]: original[keys[0]], [args.node]: node._id }))
 }
 
