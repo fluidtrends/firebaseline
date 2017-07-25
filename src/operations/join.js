@@ -20,14 +20,14 @@ function join (firebase, args) {
                       var updates = {}
 
                       primaryNode = Array(primaries.length).fill(primaryNode).join("-")
-                      primaries.forEach(primary => {
-                          secondaries.forEach(sec => {
-                              updates['/' + primaryNode + "-" + secondaryNode + "/" + primary._id + "/" + sec._id] = true
-                              if (primaryNode === secondaryNode) {
-                                  // Also reverse it
-                                  updates['/' + primaryNode + "-" + secondaryNode + "/" + sec._id + "/" + primary._id] = true
-                              }
-                          })
+                      const primaryId = primaries.map(p => p._id).join("/")
+                      const primaryIdReverse = primaries.reverse().map(p => p._id).join("/")
+                      secondaries.forEach(sec => {
+                          updates['/' + primaryNode + "-" + secondaryNode + "/" + primaryId + "/" + sec._id] = true
+                          if (primaries.length > 1) {
+                              // Also reverse it
+                              updates['/' + primaryNode + "-" + secondaryNode + "/" + primaryIdReverse + "/" + sec._id] = true
+                          }
                       })
 
                       return firebase.database().ref().update(updates)
