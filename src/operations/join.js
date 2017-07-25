@@ -10,8 +10,8 @@ function join (firebase, args) {
   const primaryValue = Object.keys(args).length > 1 ? args[primaryKey].split(',') : [args[primaryKey].split(",")[0]]
   const secondaryValue = Object.keys(args).length > 1 ? args[secondaryKey].split(',') : [args[primaryKey].split(",")[1]]
 
-  var operations = primaryValue.map(value => retrieve(firebase, [primaryKey + "/" + value]))
-  operations = operations.concat(secondaryValue.map(value => retrieve(firebase, [secondaryKey + "/" + value])))
+  var operations = primaryValue.map(value => retrieve(firebase, {key: primaryKey + "/" + value}))
+  operations = operations.concat(secondaryValue.map(value => retrieve(firebase, { key: secondaryKey + "/" + value})))
 
   return Promise.all(operations).
                   then(data => {

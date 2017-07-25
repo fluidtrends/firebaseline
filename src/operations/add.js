@@ -15,7 +15,10 @@ function add(firebase, args) {
    })
 
    return create(firebase, args).
-          then(node => join(firebase, { [keys[0]]: original[keys[0]], [args.node]: node._id }))
+          then(node => {
+            const joinKeys = { [keys[0]]: original[keys[0]], [args.node]: node._id }
+            return join(firebase, joinKeys)
+          })
 }
 
 module.exports = add

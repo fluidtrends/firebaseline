@@ -14,7 +14,7 @@ function create(firebase, args) {
     updates[args.node + "/" + _id] = data
 
     // Submit the data
-    return firebase.database().ref().update(updates).then( () => Object.assign({}, data, { _id }))
+    return firebase.database().ref().update(updates).then(() => Object.assign({}, data, { _id }))
 }
 
 module.exports = create
