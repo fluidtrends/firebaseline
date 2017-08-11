@@ -17,7 +17,7 @@ function retrieve(firebase, args) {
              then(snapshot => {
                  const data = snapshot.val()
                  if (index) {
-                   return Object.assign({}, data, { _id : index })
+                     return Object.assign({}, data, { _id : index })
                  }
                  if (Array.isArray(data)) {
                    return data
