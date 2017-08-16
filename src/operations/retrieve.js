@@ -27,7 +27,7 @@ function retrieve(firebase, args) {
               var data = snapshot.val()
 
               if (byId) {
-                return data
+                return Object.assign({}, data, { _id:  args.key.split("/").slice(-1)[0] })
               }
 
               data = Object.keys(data).map(key => {

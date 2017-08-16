@@ -1,6 +1,6 @@
 {
   "name": "firebaseline",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Firebase Starting Point",
   "main": "index.js",
   "dependencies": {
