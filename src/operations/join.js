@@ -10,12 +10,14 @@ function join (firebase, allArgs) {
     var ops = []
 
     var path = ""
+    var twinPath = false
 
     for (const node in args) {
         const data = args[node]
 
         if ("object" === typeof data) {
             if (Array.isArray(data)) {
+                twinPath = true
                 ops = ops.concat(data.map(d => {
                     path = path + (path ? "-" : "") + node
                     return Object.assign({ node }, d)
@@ -50,10 +52,16 @@ function join (firebase, allArgs) {
             return item
         })
     })).
-    then(items => Promise.all([
-        update(firebase, { key: path + (original ? "/" + original._id : ""), timestamp: new Date().getTime() })    
-        // update(firebase, { key: path2, timestamp: new Date().getTime() })
-    ]))
+    then(items => {
+        var updates = [
+            update(firebase, { key: path + (original ? "/" + original._id : ""), timestamp: new Date().getTime() })
+        ]
+        if (twinPath) {
+            const reverseTwinPath = path.split("/").slice(0, -2) + "/" + path.split("/").slice(-2).reverse().join("/")
+            updates.push(update(firebase, { key: reverseTwinPath + (original ? "/" + original._id : ""), timestamp: new Date().getTime() }))            
+        }
+        return Promise.all(updates)
+    })
 }
 
 module.exports = join
