@@ -3,7 +3,7 @@ function update(firebase, args) {
     // const [node, index, value] = key.split('/')
     delete args.key
 
-    return firebase.database().ref(key).set(args)
+    return firebase.database().ref(key).set(Object.assign({ timestamp: new Date().getTime() }, args))
 
     // if (!value) {
     //     // Get the node by id

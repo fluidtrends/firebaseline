@@ -1,42 +1,29 @@
 function retrieve(firebase, args) {
-  const key = args.key
-  const [node, index, value] = key.split('/')
+  var ref = firebase.database().ref(args.key)
 
-  if (args.orderBy && args.latest) {
-    return firebase.database().ref('/' + node).orderByChild(args.orderBy).once('value').
-           then(snapshot => {
-               const data = snapshot.val()
-               const _id = Object.keys(data)[0]
-               return Object.assign({}, data[_id], { _id })
-            })
+  if (args.orderBy) {
+    ref = ref.orderByChild(args.orderBy)
   }
 
-  if (!value) {
-      // Get the node by id
-      return firebase.database().ref('/' + node + (index ? ("/" + index) : "")).once('value').
-             then(snapshot => {
-                 const data = snapshot.val()
-                 if (index) {
-                     return Object.assign({}, data, { _id : index })
-                 }
-                 if (Array.isArray(data)) {
-                   return data
-                 }
-                 var items = []
-                 for (const item in data) {
-                   items.push(Object.assign({ _id: item }, data[item]))
-                 }
-                 return items
-              })
+  if (args.equalTo) {
+      ref = ref.equalTo(args.equalTo)
+  } else {
+    if (args.endAt) {
+      ref = ref.endAt(args.endAt)
+    }
+
+    if (args.limitToLast) {
+      ref = ref.limitToLast(args.limitToLast)
+    }
   }
 
-  // Get the node by index
-  return firebase.database().ref('/' + node).orderByChild(index).equalTo(value).once('value').
-         then(snapshot => {
-             const data = snapshot.val()
-             const _id = Object.keys(data)[0]
-             return Object.assign({}, data[_id], { _id })
-          })
+
+  return ref.once('value').
+          then(snapshot => {
+              var data = snapshot.val()
+              data = Object.keys(data).map(_id => Object.assign({}, data[_id], { _id }))
+              return (data.length === 1 ? data[0] : data)
+  })
 }
 
 module.exports = retrieve

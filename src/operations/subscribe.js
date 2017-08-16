@@ -1,23 +1,21 @@
 function subscribe(firebase, args) {
-  const key = args.key
-  const [node, index, value] = key.split('/')
+  return new Promise((resolve, reject) => {  
+    var ref = firebase.database().ref(args.key)
 
-  if (!value) {
-      // Get the node by id
-      firebase.database().ref('/' + node + "/" + index).on('value', snapshot => {
-         const data = snapshot.val()
-         const result = Object.assign({}, data, { })
-         args.onReceivedData(result)
-      })
-      return
-  }
+    if (args.orderBy) {
+      ref = ref.orderByChild(args.orderBy)
+    }
 
-  // Get the node by index
-  firebase.database().ref('/' + node).orderByChild(index).equalTo(value).on('value', snapshot => {
-     const data = snapshot.val()
-     const _id = Object.keys(data)[0]
-     const result = Object.assign({}, data[_id], { })
-     args.onReceivedData(result)
+    if (args.limitToLast) {
+      ref = ref.limitToLast(args.limitToLast)
+    }
+    
+    ref.on('value', snapshot => {
+      const data = snapshot.val()
+      args.onReceivedData && args.onReceivedData(Object.assign({ }, data))
+    })
+    args.onStarted && args.onStarted(ref)
+    resolve(ref)
   })
 }
 

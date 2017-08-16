@@ -1,37 +1,59 @@
 const retrieve = require('./retrieve')
+const update = require('./update')
 
-function join (firebase, args) {
-  const primaryKey = Object.keys(args)[0]
-  const secondaryKey = Object.keys(args)[1] || primaryKey
+function join (firebase, allArgs) {
 
-  var primaryNode = primaryKey.split("/")[0]
-  const secondaryNode = secondaryKey.split("/")[0]
+    const args = allArgs.join || allArgs
+    const nodeName = allArgs.nodeName
+    const original = allArgs.node 
 
-  const primaryValue = Object.keys(args).length > 1 ? args[primaryKey].split(',') : [args[primaryKey].split(",")[0]]
-  const secondaryValue = Object.keys(args).length > 1 ? args[secondaryKey].split(',') : [args[primaryKey].split(",")[1]]
+    var ops = []
 
-  var operations = primaryValue.map(value => retrieve(firebase, {key: primaryKey + "/" + value}))
-  operations = operations.concat(secondaryValue.map(value => retrieve(firebase, { key: secondaryKey + "/" + value})))
+    var path = ""
 
-  return Promise.all(operations).
-                  then(data => {
-                      const primaries = data.slice(0, primaryValue.length)
-                      const secondaries = data.slice(primaryValue.length)
-                      var updates = {}
+    for (const node in args) {
+        const data = args[node]
 
-                      primaryNode = Array(primaries.length).fill(primaryNode).join("-")
-                      const primaryId = primaries.map(p => p._id).join("/")
-                      const primaryIdReverse = primaries.reverse().map(p => p._id).join("/")
-                      secondaries.forEach(sec => {
-                          updates['/' + primaryNode + "-" + secondaryNode + "/" + primaryId + "/" + sec._id] = true
-                          if (primaries.length > 1) {
-                              // Also reverse it
-                              updates['/' + primaryNode + "-" + secondaryNode + "/" + primaryIdReverse + "/" + sec._id] = true
-                          }
-                      })
+        if ("object" === typeof data) {
+            if (Array.isArray(data)) {
+                ops = ops.concat(data.map(d => {
+                    path = path + (path ? "-" : "") + node
+                    return Object.assign({ node }, d)
+                }))
+            } else {
+                path = path + (path ? "-" : "") + node
+                ops.push(Object.assign({ node }, data))
+            }
+        }
+    }
+    
+    if (original) {
+        path = `${path}-${nodeName}`
+    }
 
-                      return firebase.database().ref().update(updates)
-                  })
+    return Promise.all(ops.map(data => {
+        const node = data.node
+        delete data.node
+
+        const key = Object.keys(data)[0]
+        const value = data[key]
+ 
+        var chain = Promise.resolve({ _id: value })
+
+        if (key !== "id") {
+            chain = chain.then(() => retrieve(firebase, { key: node, orderBy: key, equalTo: value }))
+        }
+        
+        return chain.then(item => {
+            if (!item._id) { return }
+            path = path + "/" + item._id 
+            return item
+        })
+    })).
+    then(items => Promise.all([
+        update(firebase, { key: path + (original ? "/" + original._id : ""), timestamp: new Date().getTime() })    
+        // update(firebase, { key: path2, timestamp: new Date().getTime() })
+    ]))
 }
 
 module.exports = join
