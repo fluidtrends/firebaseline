@@ -1,5 +1,5 @@
 function subscribe(firebase, args) {
-  return new Promise((resolve, reject) => {  
+  return new Promise((resolve, reject) => {
     var ref = firebase.database().ref(args.key)
 
     if (args.orderBy) {
@@ -9,7 +9,7 @@ function subscribe(firebase, args) {
     if (args.limitToLast) {
       ref = ref.limitToLast(args.limitToLast)
     }
-    
+
     ref.on('value', snapshot => {
       const data = snapshot.val()
       args.onReceivedData && args.onReceivedData(Object.assign({ }, data))

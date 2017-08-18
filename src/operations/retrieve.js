@@ -1,6 +1,5 @@
 function retrieve(firebase, args) {
   var ref = firebase.database().ref(args.key)
-  // var byId = (Object.keys(args).length === 1 && args.key.split("/").length === 2)
 
   if (args.orderBy) {
     ref = ref.orderByChild(args.orderBy)

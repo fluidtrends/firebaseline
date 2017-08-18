@@ -5,7 +5,7 @@ function add(firebase, args) {
     const joinArgs = args.join
     delete args.join
 
-   return create(firebase, args).
+    return create(firebase, args).
           then(node => join(firebase, Object.assign({ node, nodeName: args.node, join: joinArgs })))
 }
 
