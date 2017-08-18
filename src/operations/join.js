@@ -5,7 +5,7 @@ function join (firebase, allArgs) {
 
     const args = allArgs.join || allArgs
     const nodeName = allArgs.nodeName
-    const original = allArgs.node 
+    const original = allArgs.node
 
     var ops = []
 
@@ -28,7 +28,7 @@ function join (firebase, allArgs) {
             }
         }
     }
-    
+
     if (original) {
         path = `${path}-${nodeName}`
     }
@@ -39,16 +39,16 @@ function join (firebase, allArgs) {
 
         const key = Object.keys(data)[0]
         const value = data[key]
- 
+
         var chain = Promise.resolve({ _id: value })
 
         if (key !== "id") {
             chain = chain.then(() => retrieve(firebase, { key: node, orderBy: key, equalTo: value }))
         }
-        
+
         return chain.then(item => {
             if (!item._id) { return }
-            path = path + "/" + item._id 
+            path = path + "/" + item._id
             return item
         })
     })).
@@ -58,7 +58,7 @@ function join (firebase, allArgs) {
         ]
         if (twinPath) {
             const reverseTwinPath = path.split("/").slice(0, -2) + "/" + path.split("/").slice(-2).reverse().join("/")
-            updates.push(update(firebase, { key: reverseTwinPath + (original ? "/" + original._id : ""), timestamp: new Date().getTime() }))            
+            updates.push(update(firebase, { key: reverseTwinPath + (original ? "/" + original._id : ""), timestamp: new Date().getTime() }))
         }
         return Promise.all(updates)
     })

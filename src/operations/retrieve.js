@@ -1,23 +1,19 @@
 function retrieve(firebase, args) {
   var ref = firebase.database().ref(args.key)
-  var byId = true
+  // var byId = (Object.keys(args).length === 1 && args.key.split("/").length === 2)
 
   if (args.orderBy) {
-    byId = false
     ref = ref.orderByChild(args.orderBy)
   }
 
   if (args.equalTo) {
-      byId = false
       ref = ref.equalTo(args.equalTo)
   } else {
     if (args.endAt) {
-      byId = false
       ref = ref.endAt(args.endAt)
     }
 
     if (args.limitToLast) {
-      byId = false
       ref = ref.limitToLast(args.limitToLast)
     }
   }
@@ -26,13 +22,12 @@ function retrieve(firebase, args) {
           then(snapshot => {
               var data = snapshot.val()
 
-              if (byId) {
-                return Object.assign({}, data, { _id:  args.key.split("/").slice(-1)[0] })
+              if (!data || Object.keys(data).length === 0) {
+                return []
               }
 
-              data = Object.keys(data).map(key => {
-                return Object.assign({}, data[key], { _id: key })
-              })
+              data = (data.timestamp ? Object.assign({ _id: snapshot.key }, data) :
+                      Object.keys(data).map(_id => Object.assign({ _id }, data[_id])))
 
               return (data.length === 1 ? data[0] : data)
   })
