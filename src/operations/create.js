@@ -7,7 +7,7 @@ function create(firebase, args) {
     delete data.node
 
     // Inject creation timestamp
-    data.timestamp = new Date().getTime()
+    data.timestamp = data.timestamp || new Date().getTime()
 
     // Create the content
     var updates = {}
