@@ -2,10 +2,15 @@ const retrieve = require('./retrieve')
 const update = require('./update')
 
 function join (firebase, allArgs) {
-
-    const args = allArgs.join || allArgs
     const nodeName = allArgs.nodeName
     const original = allArgs.node
+
+    const args = Object.assign({}, allArgs.join || allArgs)
+    const filter = args.filter
+    const afterFilter = (filter && filter.after ? new Date(filter.after).getTime() : undefined)
+    const beforeFilter = (filter && filter.before ? new Date(filter.before).getTime() : undefined)
+
+    delete args.filter
 
     var ops = []
 
@@ -46,15 +51,22 @@ function join (firebase, allArgs) {
         }
 
         return chain.then(item => {
-            if (!item._id) { return }
+            if (!item._id) {
+              return
+            }
             path = path + "/" + item._id
             return item
         })
     })).
     then(items => {
+        var updates = []
         const timestamp = (original && original.timestamp ? original.timestamp : new Date().getTime())
-        var updates = [
-            update(firebase, { key: path + (original ? "/" + original._id : ""), timestamp})
+        if (afterFilter && timestamp <= afterFilter) {
+          return Promise.resolve()
+        }
+
+        updates = [
+          update(firebase, { key: path + (original ? "/" + original._id : ""), timestamp})
         ]
         if (twinPath) {
             const reverseTwinPath = path.split("/").slice(0, -2) + "/" + path.split("/").slice(-2).reverse().join("/")
