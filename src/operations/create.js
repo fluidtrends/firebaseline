@@ -1,6 +1,6 @@
 function create(firebase, args) {
     // Create an empty node
-    const _id = firebase.database().ref().child(args.node).push().key
+    const _id = args.id || firebase.database().ref().child(args.node).push().key
 
     // Extract the data
     var data = Object.assign({}, args)
