@@ -20,12 +20,12 @@ function join (firebase, allArgs) {
     for (const node in args) {
         const data = args[node]
         if ("object" === typeof data) {
-            if (Array.isArray(data)) {
+            if (Array.isArray(data) && data.length > 1) {
                 twinPath = true
                 ops = ops.concat(data.map(d => {
-                    path = path + (path ? "-" : "") + node
                     return Object.assign({ node }, d)
                 }))
+                path = `${node}-${node}`
             } else {
                 path = path + (path ? "-" : "") + node
                 ops.push(Object.assign({ node }, data))
@@ -54,24 +54,30 @@ function join (firebase, allArgs) {
             if (!item._id) {
               return
             }
-            path = path + "/" + item._id
             return item
         })
     })).
     then(items => {
-        var updates = []
         const timestamp = (original && original.timestamp ? original.timestamp : new Date().getTime())
         if (afterFilter && timestamp <= afterFilter) {
           return Promise.resolve()
         }
 
-        updates = [
-          update(firebase, { key: path + (original ? "/" + original._id : ""), timestamp})
-        ]
-        if (twinPath) {
-            const reverseTwinPath = path.split("/").slice(0, -2) + "/" + path.split("/").slice(-2).reverse().join("/")
-            updates.push(update(firebase, { key: reverseTwinPath + (original ? "/" + original._id : ""), timestamp }))
+        if (!twinPath) {
+          const updatePath = path + "/" + items[0]._id + (items.length > 1 ? "/" + items[1]._id : "") + (original ? "/" + original._id : "")
+          return update(firebase, { key: updatePath, timestamp })
         }
+
+        var updates = []
+
+        items.forEach(item => {
+          items.forEach(item2 => {
+            if (item._id === item2._id) { return }
+            const updatePath = path + "/" + item._id + "/" + item2._id + (original ? "/" + original._id : "")
+            updates.push(update(firebase, { key: updatePath, timestamp }))
+          })
+        })
+
         return Promise.all(updates)
     })
 }
