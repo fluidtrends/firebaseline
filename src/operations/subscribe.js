@@ -7,7 +7,7 @@ function subscribe(firebase, args) {
     }
 
     if (args.limitToLast) {
-      ref = ref.limitToLast(args.limitToLast)
+      ref = ref.limitToLast(Number.parseInt(args.limitToLast))
     }
 
     ref.on('value', snapshot => {
