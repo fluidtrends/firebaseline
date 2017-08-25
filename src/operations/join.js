@@ -7,10 +7,20 @@ function join (firebase, allArgs) {
 
     const args = Object.assign({}, allArgs.join || allArgs)
     const filter = args.filter
+
     const afterFilter = (filter && filter.after ? new Date(filter.after).getTime() : undefined)
     const beforeFilter = (filter && filter.before ? new Date(filter.before).getTime() : undefined)
+    const fieldKeyFilter = ((filter && Object.keys(filter).length === 1) ? Object.keys(filter)[0] : undefined)
+    const fieldValueFilter = (fieldKeyFilter ? filter[fieldKeyFilter] : undefined)
 
     delete args.filter
+
+    const timestamp = (original && original.timestamp ? original.timestamp : new Date().getTime())
+
+    if ((afterFilter && timestamp <= afterFilter) ||
+        (fieldKeyFilter && fieldValueFilter && original && original[fieldKeyFilter] === fieldValueFilter)) {
+      return Promise.resolve()
+    }
 
     var ops = []
 
@@ -58,11 +68,6 @@ function join (firebase, allArgs) {
         })
     })).
     then(items => {
-        const timestamp = (original && original.timestamp ? original.timestamp : new Date().getTime())
-        if (afterFilter && timestamp <= afterFilter) {
-          return Promise.resolve()
-        }
-
         if (!twinPath) {
           const updatePath = path + "/" + items[0]._id + (items.length > 1 ? "/" + items[1]._id : "") + (original ? "/" + original._id : "")
           return update(firebase, { key: updatePath, timestamp })

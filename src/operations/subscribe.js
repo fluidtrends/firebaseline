@@ -11,8 +11,8 @@ function subscribe(firebase, args) {
     }
 
     ref.on('value', snapshot => {
-      const data = snapshot.val()
-      args.onReceivedData && args.onReceivedData(Object.assign({ }, data))
+      var data = snapshot.val()
+      args.onReceivedData && args.onReceivedData(data)
     })
     args.onStarted && args.onStarted(ref)
     resolve(ref)
