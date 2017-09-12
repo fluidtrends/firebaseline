@@ -1,14 +1,11 @@
 function register(firebase, args) {
 
   var creation = Promise.resolve()
-
   if (args.appAuth) {
     return firebase.auth().createUserWithEmailAndPassword(args.email, args.password).
-            then(user => firebase.database().ref('users/' + user.uid).set({
-              email: args.email,
-              name: args.name,
+            then(user => firebase.database().ref('users/' + user.uid).set(Object.assign({
               timestamp: new Date().getTime()
-            }))
+            }, args)))
   }
 
 
@@ -18,11 +15,9 @@ function register(firebase, args) {
         password: args.password,
         displayName: args.name,
         disabled: false }).
-    then(user => firebase.database().ref('users/' + user.uid).set({
-      email: args.email,
-      name: args.name,
+    then(user => firebase.database().ref('users/' + user.uid).set(Object.assign({
       timestamp: new Date().getTime()
-    }))
+    }, args)))
 
 }
 
