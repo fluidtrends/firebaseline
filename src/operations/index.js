@@ -9,5 +9,6 @@ const update = require('./update')
 const subscribe = require('./subscribe')
 const unsubscribe = require('./unsubscribe')
 const remove = require('./remove')
+const store = require('./store')
 
-module.exports = { add, create, join, register, unregister, retrieve, login, subscribe, unsubscribe, update, remove }
+module.exports = { add, create, join, store, register, unregister, retrieve, login, subscribe, unsubscribe, update, remove }
