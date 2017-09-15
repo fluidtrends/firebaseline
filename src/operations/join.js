@@ -47,8 +47,6 @@ function join (firebase, allArgs) {
         path = `${path}-${nodeName}`
     }
 
-    console.log(path, args, allArgs, twinPath )
-
     return Promise.all(ops.map(data => {
         const node = data.node
         delete data.node
