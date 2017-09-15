@@ -68,7 +68,6 @@ function join (firebase, allArgs) {
         })
     })).
     then(items => {
-      console.log(items)
         if (!twinPath) {
           const updatePath = path + "/" + items[0]._id + (items.length > 1 ? "/" + items[1]._id : "") + (original ? "/" + original._id : "")
           return update(firebase, { key: updatePath, timestamp })
