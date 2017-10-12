@@ -33,7 +33,7 @@ function join (firebase, allArgs) {
             if (Array.isArray(data) && data.length > 1) {
                 twinPath = true
                 ops = ops.concat(data.map(d => {
-                    return Object.assign({ node }, d)
+                  return Object.assign({ node }, d)
                 }))
                 path = `${node}-${node}`
             } else {

@@ -1,5 +1,10 @@
 function retrieve(firebase, args) {
   var ref = firebase.database().ref(args.key)
+  var filter = []
+
+  if (args.filter && Array.isArray(args.filter)) {
+    filter = filter.concat(args.filter)
+  }
 
   if (args.orderBy) {
     ref = ref.orderByChild(args.orderBy)
@@ -26,7 +31,7 @@ function retrieve(firebase, args) {
               }
 
               data = (data.timestamp ? Object.assign({ _id: snapshot.key }, data) :
-                      Object.keys(data).map(_id => Object.assign({ _id }, data[_id])))
+                      Object.keys(data).filter(k => filter.includes(k)).map(_id => Object.assign({ _id }, data[_id])))
 
               return (data.length === 1 ? data[0] : data)
   })
