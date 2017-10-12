@@ -31,7 +31,7 @@ function retrieve(firebase, args) {
               }
 
               data = (data.timestamp ? Object.assign({ _id: snapshot.key }, data) :
-                      Object.keys(data).filter(k => filter.includes(k)).map(_id => Object.assign({ _id }, data[_id])))
+                      Object.keys(data).filter(k => !filter.includes(k)).map(_id => Object.assign({ _id }, data[_id])))
 
               return (data.length === 1 ? data[0] : data)
   })
