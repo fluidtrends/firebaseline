@@ -1,6 +1,7 @@
 function retrieve(firebase, args) {
   var ref = firebase.database().ref(args.key)
   var filter = []
+  var fields = args.fields
 
   if (args.filter && Array.isArray(args.filter)) {
     filter = filter.concat(args.filter)
@@ -34,7 +35,7 @@ function retrieve(firebase, args) {
                       Object.keys(data).map(_id => Object.assign({ _id }, data[_id])))
 
               if (filter.length > 0) {
-                data = data.map(item => Object.keys(item).filter(k => !filter.includes(k)).reduce((obj, key) => {
+                data = data.map(item => Object.keys(item).filter(k => !filter.includes(k) && (!fields || fields.includes(k))).reduce((obj, key) => {
                     obj[key] = item[key]
                     return obj
                 }, {}))
