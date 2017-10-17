@@ -34,12 +34,14 @@ function retrieve(firebase, args) {
               data = (data.timestamp ? Object.assign({ _id: snapshot.key }, data) :
                       Object.keys(data).map(_id => Object.assign({ _id }, data[_id])))
 
-              data = data.map(item => Object.keys(item).filter(k => {
-                return !filter.includes(k) && (!fields || fields.includes(k))
-              }).reduce((obj, key) => {
-                  obj[key] = item[key]
-                  return obj
-              }, {}))
+              if (Array.isArray(data)) {
+                data = data.map(item => Object.keys(item).filter(k => {
+                  return !filter.includes(k) && (!fields || fields.includes(k))
+                }).reduce((obj, key) => {
+                    obj[key] = item[key]
+                    return obj
+                }, {}))
+              }
 
               return (data.length === 1 ? data[0] : data)
   })
