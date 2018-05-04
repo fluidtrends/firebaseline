@@ -1,0 +1,28 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/dancali/.nvm/versions/node/v6.0.0/bin/node',
+1 verbose cli   '/Users/dancali/.nvm/versions/node/v6.0.0/bin/npm',
+1 verbose cli   'publish' ]
+2 info using npm@3.8.6
+3 info using node@v6.0.0
+4 verbose publish [ '.' ]
+5 verbose stack Error: Cannot find module 'fstream'
+5 verbose stack     at Function.Module._resolveFilename (module.js:438:15)
+5 verbose stack     at Function.Module._load (module.js:386:25)
+5 verbose stack     at Module.require (module.js:466:17)
+5 verbose stack     at require (internal/module.js:20:19)
+5 verbose stack     at Object.<anonymous> (/Users/dancali/.nvm/versions/node/v6.0.0/lib/node_modules/npm/lib/utils/tar.js:13:15)
+5 verbose stack     at Module._compile (module.js:541:32)
+5 verbose stack     at Object.Module._extensions..js (module.js:550:10)
+5 verbose stack     at Module.load (module.js:456:32)
+5 verbose stack     at tryModuleLoad (module.js:415:12)
+5 verbose stack     at Function.Module._load (module.js:407:3)
+6 verbose cwd /Users/dancali/dev/fluidtrends/firebaseline
+7 error Darwin 17.5.0
+8 error argv "/Users/dancali/.nvm/versions/node/v6.0.0/bin/node" "/Users/dancali/.nvm/versions/node/v6.0.0/bin/npm" "publish"
+9 error node v6.0.0
+10 error npm  v3.8.6
+11 error code MODULE_NOT_FOUND
+12 error Cannot find module 'fstream'
+13 error If you need help, you may report this error at:
+13 error     <https://github.com/npm/npm/issues>
+14 verbose exit [ 1, true ]

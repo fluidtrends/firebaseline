@@ -8,7 +8,7 @@ function login (firebase, args) {
   return firebase.auth().signInWithEmailAndPassword(args.email, args.password)
           .then((user) => user.toJSON())
           .then((user) => retrieve(firebase, { key: `users/${user.uid}` })
-          .then((profile) => Object.assign({}, profile, { token: firebase.auth().currentUser.getIdToken() })))
+          .then((profile) => Object.assign({}, profile)))
 }
 
 module.exports = login
